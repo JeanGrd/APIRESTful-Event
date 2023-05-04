@@ -1,16 +1,6 @@
 const Participant = require('../models/participant');
 const Event = require("../models/event");
 
-/*
-exports.register = (req, res) => {
-    const eventId = req.params.eventId;
-    const participantData = req.body;
-    Participant.register(eventId, participantData, (err, result) => {
-        if (err) return res.status(500).json({ error: 'Error registering participant' });
-        res.status(201).json({ message: 'Participant registered', participantId: result.insertId });
-    });
-};*/
-
 exports.register = (req, res) => {
     const eventId = req.params.eventId;
     const participantData = req.body;
