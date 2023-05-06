@@ -32,6 +32,15 @@ exports.getEventById = (req, res) => {
     });
 };
 
+exports.isFull = (req, res) => {
+    const eventId = req.params.id;
+    Event.isFull(eventId, (err, event) => {
+        if (err) return res.status(500).json({ error: 'Error fetching event' });
+        if (!event) return res.status(404).json({ error: 'Event not found' });
+        res.json(event);
+    });
+};
+
 exports.deleteEventById = (req, res) => {
     const eventId = req.params.id;
 

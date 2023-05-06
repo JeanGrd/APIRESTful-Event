@@ -25,6 +25,26 @@ class Event {
         const query = 'DELETE FROM events WHERE id = ?';
         db.query(query, [id], callback);
     }
+
+    static isFull(id, callback) {
+        const query = `
+            SELECT
+                events.id,
+                events.max_participants,
+                COUNT(participants.id) AS current_participants,
+                (events.max_participants <= COUNT(participants.id)) AS is_full
+            FROM
+                events
+            LEFT JOIN
+                participants ON events.id = participants.event_id
+            WHERE
+                events.id = ?
+            GROUP BY
+                events.id
+        `;
+        db.query(query, [id], callback);
+    }
 }
+
 
 module.exports = Event;

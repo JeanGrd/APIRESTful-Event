@@ -23,6 +23,7 @@ app.get('/events/open', eventController.getOpenEvents);
 app.post('/events', eventController.createEvent);
 app.get('/events/:id', eventController.getEventById);
 app.delete('/events/:id', eventController.deleteEventById);
+app.get('/events/:id/isfull', eventController.isFull);
 
 // Participant routes
 app.post('/events/:eventId/participants', participantController.register);
