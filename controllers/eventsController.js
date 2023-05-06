@@ -2,16 +2,23 @@ const Event = require('../models/event');
 const Participant = require("../models/participant");
 
 exports.getAllEvents = (req, res) => {
-    Event.getAll((err, events) => {
-        if (err) return res.status(500).json({ error: 'Error fetching events' });
-        res.json(events);
+    const page = parseInt(req.query.page) || 1;
+    Event.getAll(page, (err, result) => {
+        if (err) {
+            return res.status(500).json({ error: 'Error fetching events' });
+        }
+        res.json({ events: result.events, total: result.total });
     });
 };
 
-exports.getOpenEvents = (req, res) => {
-    Event.getOpenEvents((err, events) => {
-        if (err) return res.status(500).json({ error: 'Error fetching open events' });
-        res.json(events);
+exports.getAllOpenEvents = (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    Event.getAllOpen(page, (err, result) => {
+        if (err) {
+            console.log(err);
+            return res.status(500).json({ error: 'Error fetching events' });
+        }
+        res.json({ events: result.events, total: result.total });
     });
 };
 

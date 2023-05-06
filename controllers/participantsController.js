@@ -38,6 +38,18 @@ exports.getParticipantsByEventId = (req, res) => {
     });
 };
 
+exports.getAllByEventId = (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const eventId = req.params.eventId;
+    Participant.getAllByEventId(eventId, page, (err, result) => {
+        if (err) {
+            console.log(err);
+            return res.status(500).json({ error: 'Error fetching participants' });
+        }
+        res.json({ participants: result.participants, total: result.total });
+    });
+}
+
 exports.getTotalParticipantsByEventId = (req, res) => {
     const eventId = req.params.eventId;
     Participant.getTotalParticipantsByEventId(eventId, (err, participants) => {

@@ -10,6 +10,23 @@ class Participant {
         });
     }
 
+    static getAllByEventId(eventId, page, callback) {
+        const limit = 10;
+        const offset = (page - 1) * limit;
+        const query = 'SELECT SQL_CALC_FOUND_ROWS * FROM participants WHERE event_id = ? LIMIT ? OFFSET ?';
+        const queryTotal = 'SELECT FOUND_ROWS() as total;';
+
+        db.query(query, [eventId, limit, offset], (err, participants) => {
+            if (err) return callback(err);
+
+            db.query(queryTotal, [], (err, total) => {
+                if (err) return callback(err);
+                callback(null, { participants: participants, total: total[0].total });
+            });
+        });
+    }
+
+
     static getByEventId(eventId, callback) {
         const query = 'SELECT * FROM participants WHERE event_id = ?';
         db.query(query, [eventId], callback);
