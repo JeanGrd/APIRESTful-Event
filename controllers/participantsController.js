@@ -1,6 +1,7 @@
 const Participant = require('../models/participant');
 const Event = require("../models/event");
 
+// Inscrire un participant à un événement
 exports.register = (req, res) => {
     const eventId = req.params.eventId;
     const participantData = req.body;
@@ -9,10 +10,10 @@ exports.register = (req, res) => {
         if (err) return res.status(500).json({ error: 'Error fetching event' });
         if (!event) return res.status(404).json({ error: 'Event not found' });
 
-        Participant.getTotalParticipantsByEventId(eventId, (err, result) => {
+        Participant.getTotalParticipants(eventId, (err, result) => {
             if (err) return res.status(500).json({ error: 'Error fetching participant count' });
 
-            if (result && result[0] && result[0].participant_count < event[0].max_participants) {
+            if (result && result[0] && result[0].total < event[0].max_participants) {
                 // Ajouter le participant à l'événement, car la capacité n'est pas encore dépassée.
                 Participant.register(eventId, participantData, (err, result) => {
                     if (err){
@@ -29,19 +30,21 @@ exports.register = (req, res) => {
     });
 };
 
-
-exports.getParticipantsByEventId = (req, res) => {
+// Récupérer tous les participants d'un événement par son ID
+exports.getAllByEventId = (req, res) => {
     const eventId = req.params.eventId;
-    Participant.getByEventId(eventId, (err, participants) => {
+    Participant.getAllByEventId(eventId, (err, participants) => {
         if (err) return res.status(500).json({ error: 'Error fetching participants' });
         res.json(participants);
     });
 };
 
-exports.getAllByEventId = (req, res) => {
+// Récupérer tous les participants d'un événement avec pagination et recherche
+exports.getAllByEventIdPages = (req, res) => {
     const page = parseInt(req.query.page) || 1;
+    const searchTerm = req.query.search || '';
     const eventId = req.params.eventId;
-    Participant.getAllByEventId(eventId, page, (err, result) => {
+    Participant.getAllByEventIdPage(eventId, searchTerm, page, (err, result) => {
         if (err) {
             console.log(err);
             return res.status(500).json({ error: 'Error fetching participants' });
@@ -50,14 +53,16 @@ exports.getAllByEventId = (req, res) => {
     });
 }
 
-exports.getTotalParticipantsByEventId = (req, res) => {
+// Obtenir le nombre total de participants pour un événement
+exports.getTotalParticipants = (req, res) => {
     const eventId = req.params.eventId;
-    Participant.getTotalParticipantsByEventId(eventId, (err, participants) => {
+    Participant.getTotalParticipants(eventId, (err, participants) => {
         if (err) return res.status(500).json({ error: 'Error fetching participants' });
         res.json(participants);
     });
 };
 
+// Récupérer un participant par son ID et l'ID de l'événement
 exports.getParticipantByEventId = (req, res) => {
     const eventId = req.params.eventId;
     const participantId = req.params.participantId;
@@ -67,6 +72,7 @@ exports.getParticipantByEventId = (req, res) => {
     });
 };
 
+// Mettre à jour les informations d'un participant
 exports.updateParticipant = (req, res) => {
     const participantId = req.params.participantId;
     const updatedParticipant = req.body;
@@ -78,6 +84,7 @@ exports.updateParticipant = (req, res) => {
     });
 };
 
+// Supprimer un participant par son ID
 exports.deleteParticipant = (req, res) => {
     const participantId = req.params.participantId;
     Participant.deleteParticipant(participantId, (err, result) => {
@@ -86,3 +93,11 @@ exports.deleteParticipant = (req, res) => {
     });
 };
 
+// Obtenir la moyenne des participants pour tous les évènements
+exports.getAverageParticipants = (req, res) => {
+    const eventId = req.params.eventId;
+    Participant.getAverageParticipants(eventId, (err, average_participants) => {
+        if (err) return res.status(500).json({ error: 'Error fetching participants' });
+        res.json(average_participants);
+    });
+};

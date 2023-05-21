@@ -1,6 +1,7 @@
 const Admin = require('../models/admin');
 const jwt = require('jsonwebtoken');
 
+// Connexion pour un administrateur
 exports.login = (req, res) => {
     const { username, password } = req.body;
     Admin.getByUsername(username, (err, admin) => {
@@ -15,7 +16,7 @@ exports.login = (req, res) => {
     });
 };
 
-
+// Inscription d'un nouvel administrateur
 exports.register = (req, res) => {
     const { username, password } = req.body;
     Admin.create(username, password, (err, result) => {
@@ -23,4 +24,3 @@ exports.register = (req, res) => {
         res.json({ message: 'Admin created', result });
     });
 };
-

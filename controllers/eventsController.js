@@ -1,19 +1,26 @@
 const Event = require('../models/event');
 const Participant = require("../models/participant");
 
+// Récupération de tous les événements avec pagination et recherche
 exports.getAllEvents = (req, res) => {
-    const page = parseInt(req.query.page) || 1;
-    Event.getAll(page, (err, result) => {
+    const page = req.query.page || 1;
+    const searchTerm = req.query.search || '';
+    Event.getAll(page, searchTerm, (err, data) => {
         if (err) {
-            return res.status(500).json({ error: 'Error fetching events' });
+            res.status(500).send({
+                message: err.message || "Une erreur est survenue lors de la récupération des événements."
+            });
+        } else {
+            res.send(data);
         }
-        res.json({ events: result.events, total: result.total });
     });
 };
 
+// Récupérer tous les événements ouverts (non clôturés) avec pagination et recherche
 exports.getAllOpenEvents = (req, res) => {
     const page = parseInt(req.query.page) || 1;
-    Event.getAllOpen(page, (err, result) => {
+    const searchTerm = req.query.search || '';
+    Event.getAllOpen(page, searchTerm, (err, result) => {
         if (err) {
             console.log(err);
             return res.status(500).json({ error: 'Error fetching events' });
@@ -22,6 +29,7 @@ exports.getAllOpenEvents = (req, res) => {
     });
 };
 
+// Créer un nouvel événement
 exports.createEvent = (req, res) => {
     const eventData = req.body;
     Event.create(eventData, (err, result) => {
@@ -30,8 +38,9 @@ exports.createEvent = (req, res) => {
     });
 };
 
+// Récupérer un événement par ID
 exports.getEventById = (req, res) => {
-    const eventId = req.params.id;
+    const eventId = req.params.eventId;
     Event.getById(eventId, (err, event) => {
         if (err) return res.status(500).json({ error: 'Error fetching event' });
         if (!event) return res.status(404).json({ error: 'Event not found' });
@@ -39,8 +48,9 @@ exports.getEventById = (req, res) => {
     });
 };
 
+// Vérifier si un événement est complet
 exports.isFull = (req, res) => {
-    const eventId = req.params.id;
+    const eventId = req.params.eventId;
     Event.isFull(eventId, (err, event) => {
         if (err) return res.status(500).json({ error: 'Error fetching event' });
         if (!event) return res.status(404).json({ error: 'Event not found' });
@@ -48,8 +58,9 @@ exports.isFull = (req, res) => {
     });
 };
 
+// Supprimer un événement par ID
 exports.deleteEventById = (req, res) => {
-    const eventId = req.params.id;
+    const eventId = req.params.eventId;
 
     // Supprimer les participants liés à l'événement
     Participant.deleteParticipantsByEvent(eventId, (err, result) => {
@@ -64,3 +75,10 @@ exports.deleteEventById = (req, res) => {
     });
 };
 
+// Obtenir le nombre total d'événements
+exports.getTotalEvent = (req, res) => {
+    Event.getTotalEvent((err, events) => {
+        if (err) return res.status(500).json({ error: 'Error fetching events' });
+        res.json(events);
+    });
+};
