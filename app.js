@@ -1,46 +1,71 @@
-/*
------------------------------------
-Project: MiageEvent
-Written by: Jean Guiraud
------------------------------------
- */
+// Import controllers
+const supplierController = require('./controllers/supplierController');
+const categoryController = require('./controllers/categoryController');
+const productController = require('./controllers/productController');
+const unitController = require('./controllers/unitController');
+const transactionController = require('./controllers/transactionController');
+const statisticsController = require('./controllers/statisticsController');
+const userController = require('./controllers/userController');
 
-// Importation des modules nécessaires
+// Import required modules
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const eventController = require('./controllers/eventsController');
-const participantController = require('./controllers/participantsController');
-const adminController = require('./controllers/adminsController');
 
-// Création de l'application Express
+// Create Express app
 const app = express();
-module.exports = app;
 
-// Utilisation des middlewares pour gérer les requêtes entrantes
+// Use middlewares
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Routes pour les administrateurs
-app.post('/auth/login', adminController.login); // Authentification de l'administrateur
-app.post('/auth/register', adminController.register); // Enregistrement d'un nouvel administrateur
+// Supplier routes
+app.get('/suppliers', supplierController.getAllSuppliers);
+app.get('/suppliers/:supplierId', supplierController.getSupplierById);
+app.post('/suppliers', supplierController.createSupplier);
+app.put('/suppliers/:supplierId', supplierController.updateSupplier);
+app.delete('/suppliers/:supplierId', supplierController.deleteSupplier);
 
-// Routes pour les événements
-app.get('/events', eventController.getAllEvents); // Récupération de tous les événements avec pagination et recherche
-app.get('/events/open', eventController.getAllOpenEvents); // Récupération des événements ouverts avec pagination et recherche
-app.get('/events/total', eventController.getTotalEvent); // Récupération du nombre total d'événements
-app.get('/events/:eventId', eventController.getEventById); // Récupération d'un événement par son ID
-app.get('/events/:eventId/isfull', eventController.isFull); // Vérification si un événement est complet
-app.delete('/events/:eventId', eventController.deleteEventById); // Suppression d'un événement par son ID
-app.post('/events', eventController.createEvent); // Création d'un nouvel événement
+// Category routes
+app.get('/categories', categoryController.getAllCategories);
+app.get('/categories/:categoryId', categoryController.getCategoryById);
+app.post('/categories', categoryController.createCategory);
+app.put('/categories/:categoryId', categoryController.updateCategory);
+app.delete('/categories/:categoryId', categoryController.deleteCategory);
 
-// Routes pour les participants
-app.get('/events/participants/average', participantController.getAverageParticipants); // Récupération de la moyenne des participants de tous les événements
-app.get('/events/:eventId/participants', participantController.getAllByEventId); // Récupération de tous les participants d'un événement par son ID
-app.get('/events/:eventId/participants-page', participantController.getAllByEventIdPages); // Récupération des participants d'un événement avec pagination et recherche
-app.get('/events/:eventId/participants/total', participantController.getTotalParticipants); // Récupération du nombre total de participants pour un événement
-app.get('/events/:eventId/participants/:participantId', participantController.getParticipantByEventId); // Récupération d'un participant par son ID et l'ID de l'événement
-app.post('/events/:eventId/participants', participantController.register); // Inscription d'un participant à un événement
-app.put('/events/:eventId/participants/:participantId', participantController.updateParticipant); // Mise à jour des informations d'un participant
-app.delete('/events/:eventId/participants/:participantId', participantController.deleteParticipant); // Suppression d'un participant
+// Product routes
+app.get('/products', productController.getAllProducts);
+app.get('/products/:productId', productController.getProductById);
+app.post('/products', productController.createProduct);
+app.put('/products/:productId', productController.updateProduct);
+app.delete('/products/:productId', productController.deleteProduct);
+
+// Unit routes
+app.get('/units', unitController.getAllUnits);
+app.get('/units/:unitId', unitController.getUnitById);
+app.post('/units', unitController.createUnit);
+app.put('/units/:unitId', unitController.updateUnit);
+app.delete('/units/:unitId', unitController.deleteUnit);
+
+// Transaction routes
+app.get('/transactions', transactionController.getAllTransactions);
+app.get('/transactions/:transactionId', transactionController.getTransactionById);
+app.post('/transactions', transactionController.createTransaction);
+app.put('/transactions/:transactionId', transactionController.updateTransaction);
+app.delete('/transactions/:transactionId', transactionController.deleteTransaction);
+
+// User routes
+app.get('/users', userController.getAllUsers);
+app.get('/users/:userId', userController.getUserById);
+app.post('/users', userController.createUser);
+app.put('/users/:userId', userController.updateUser);
+app.delete('/users/:userId', userController.deleteUser);
+
+// Statistics routes
+app.get('/statistics/units-in-stock', statisticsController.getTotalUnitsInStock);
+app.get('/statistics/expiring-soon', statisticsController.getProductsExpiringSoon);
+app.get('/statistics/supplier-activity', statisticsController.getSupplierActivity);
+
+// Export the app
+module.exports = app;

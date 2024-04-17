@@ -7,7 +7,7 @@ const connection = mysql.createConnection({
     port: 8889, // Port utilisé pour se connecter à la base de données
     user: 'root', // Nom d'utilisateur pour accéder à la base de données
     password: 'root', // Mot de passe pour accéder à la base de données
-    database: 'EventOrganizer' // Nom de la base de données à laquelle se connecter
+    database: 'SaveEat' // Nom de la base de données à laquelle se connecter
 });
 
 // Établir la connexion à la base de données
