@@ -13,7 +13,21 @@ class Product {
 
     // Récupérer tous les produits
     static getAll(callback) {
-        const query = 'SELECT p.PRODUCT_ID, p.NAME, c.NAME AS CATEGORY_NAME FROM PRODUCTS p JOIN CATEGORIES c ON p.CATEGORY_ID = c.CATEGORY_ID';
+        const query = 'SELECT \n' +
+            '    p.PRODUCT_ID, \n' +
+            '    p.NAME, \n' +
+            '    c.CATEGORY_ID, \n' +
+            '    c.NAME AS CATEGORY_NAME, \n' +
+            '    c.DESCRIPTION AS CATEGORY_DESCRIPTION,\n' +
+            '    COUNT(u.UNIT_ID) AS QUANTITY\n' +
+            'FROM \n' +
+            '    PRODUCTS p\n' +
+            'JOIN \n' +
+            '    CATEGORIES c ON p.CATEGORY_ID = c.CATEGORY_ID\n' +
+            'LEFT JOIN \n' +
+            '    UNITS u ON p.PRODUCT_ID = u.PRODUCT_ID\n' +
+            'GROUP BY \n' +
+            '    p.PRODUCT_ID, p.NAME, c.CATEGORY_ID, c.NAME, c.DESCRIPTION;';
         db.query(query, (err, results) => {
             if (err) {
                 callback(err, null);
@@ -25,7 +39,23 @@ class Product {
 
     // Récupérer un produit par son ID
     static getById(productId, callback) {
-        const query = 'SELECT p.PRODUCT_ID, p.NAME, c.NAME AS CATEGORY_NAME FROM PRODUCTS p JOIN CATEGORIES c ON p.CATEGORY_ID = c.CATEGORY_ID WHERE p.PRODUCT_ID = ?';
+        const query = 'SELECT \n' +
+            '    p.PRODUCT_ID, \n' +
+            '    p.NAME, \n' +
+            '    c.CATEGORY_ID, \n' +
+            '    c.NAME AS CATEGORY_NAME, \n' +
+            '    c.DESCRIPTION,\n' +
+            '    COUNT(u.UNIT_ID) AS QUANTITY\n' +
+            'FROM \n' +
+            '    PRODUCTS p\n' +
+            'JOIN \n' +
+            '    CATEGORIES c ON p.CATEGORY_ID = c.CATEGORY_ID\n' +
+            'LEFT JOIN \n' +
+            '    UNITS u ON p.PRODUCT_ID = u.PRODUCT_ID\n' +
+            'WHERE \n' +
+            '    p.PRODUCT_ID = ?\n' +
+            'GROUP BY \n' +
+            '    p.PRODUCT_ID, p.NAME, c.CATEGORY_ID, c.NAME, c.DESCRIPTION;\n';
         db.query(query, [productId], (err, result) => {
             if (err) {
                 callback(err, null);
@@ -59,6 +89,22 @@ class Product {
                 callback(err, null);
             } else {
                 callback(null, result);
+            }
+        });
+    }
+
+    static getCategoryId(productId, callback) {
+        const query = 'SELECT CATEGORY_ID FROM PRODUCTS WHERE PRODUCT_ID = ?';
+        db.query(query, [productId], (err, results) => {
+            if (err) {
+                callback(err, null);
+            } else {
+                // results is an array of rows, you need to check if we have at least one row
+                if (results.length > 0) {
+                    callback(null, results[0].CATEGORY_ID); // Return the first row's CATEGORY_ID
+                } else {
+                    callback(new Error("No product found with the given ID"), null);
+                }
             }
         });
     }

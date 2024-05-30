@@ -4,7 +4,7 @@ class Statistics {
 
     // Récupérer le nombre total d'unités en stock pour chaque produit
     static getTotalUnitsInStock(callback) {
-        const query = 'SELECT p.NAME, COUNT(u.UNIT_ID) AS TOTAL_UNITS FROM PRODUCTS p JOIN UNITS u ON p.PRODUCT_ID = u.PRODUCT_ID GROUP BY p.NAME';
+        const query = 'SELECT COUNT(u.UNIT_ID) AS TOTAL_UNITS FROM PRODUCTS p JOIN UNITS u ON p.PRODUCT_ID = u.PRODUCT_ID';
         db.query(query, (err, results) => {
             if (err) {
                 callback(err, null);
@@ -34,6 +34,20 @@ class Statistics {
                 callback(err, null);
             } else {
                 callback(null, results);
+            }
+        });
+    }
+
+    static getQuantityById(productId, callback) {
+        const query = `
+        SELECT COUNT(*) AS quantity
+        FROM UNITS
+        WHERE PRODUCT_ID = ?`;
+        db.query(query, [productId], (err, results) => {
+            if (err) {
+                callback(err, null);
+            } else {
+                callback(null, results[0].quantity); // retourne la quantité du produit
             }
         });
     }

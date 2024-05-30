@@ -60,3 +60,17 @@ exports.deleteProduct = (req, res) => {
         }
     });
 };
+
+// In productController.js
+
+exports.getCategoryIdByProductId = (req, res) => {
+    const productId = req.params.productId;
+    Product.getCategoryId(productId, (err, categoryId) => {
+        if (err) {
+            res.status(500).send({ message: "Error retrieving category ID", error: err });
+        } else {
+            res.send({ categoryId });
+        }
+    });
+};
+

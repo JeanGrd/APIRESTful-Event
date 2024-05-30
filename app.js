@@ -6,6 +6,8 @@ const unitController = require('./controllers/unitController');
 const transactionController = require('./controllers/transactionController');
 const statisticsController = require('./controllers/statisticsController');
 const userController = require('./controllers/userController');
+const authController = require('./controllers/authController');
+
 
 // Import required modules
 const express = require('express');
@@ -23,6 +25,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Supplier routes
 app.get('/suppliers', supplierController.getAllSuppliers);
 app.get('/suppliers/:supplierId', supplierController.getSupplierById);
+app.get('/suppliers/name/:name', supplierController.getSupplierIdByName);
 app.post('/suppliers', supplierController.createSupplier);
 app.put('/suppliers/:supplierId', supplierController.updateSupplier);
 app.delete('/suppliers/:supplierId', supplierController.deleteSupplier);
@@ -40,9 +43,11 @@ app.get('/products/:productId', productController.getProductById);
 app.post('/products', productController.createProduct);
 app.put('/products/:productId', productController.updateProduct);
 app.delete('/products/:productId', productController.deleteProduct);
+app.get('/products/:productId/categoryId', productController.getCategoryIdByProductId);
 
 // Unit routes
 app.get('/units', unitController.getAllUnits);
+app.get('/units/product/:productId', unitController.getAllUnitsByProduct);
 app.get('/units/:unitId', unitController.getUnitById);
 app.post('/units', unitController.createUnit);
 app.put('/units/:unitId', unitController.updateUnit);
@@ -66,6 +71,9 @@ app.delete('/users/:userId', userController.deleteUser);
 app.get('/statistics/units-in-stock', statisticsController.getTotalUnitsInStock);
 app.get('/statistics/expiring-soon', statisticsController.getProductsExpiringSoon);
 app.get('/statistics/supplier-activity', statisticsController.getSupplierActivity);
+app.get('/statistics/:productId/quantity', statisticsController.getProductQuantityById);
+
+//app.post('/auth/login', AuthController.login);
 
 // Export the app
 module.exports = app;

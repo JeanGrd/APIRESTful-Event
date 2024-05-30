@@ -1,13 +1,12 @@
 const Unit = require('../models/Unit');
 
 exports.createUnit = (req, res) => {
-    const { productId, supplierId, expirationDate, purchasePrice, salePrice } = req.body;
-    Unit.create(productId, supplierId, expirationDate, purchasePrice, salePrice, (err, result) => {
+    const { productId, supplierName, expirationDate, purchasePrice, salePrice, brand, description } = req.body;
+    Unit.create(productId, supplierName, expirationDate, purchasePrice, salePrice, brand, description, (err, result) => {
         if (err) {
-            res.status(500).send({ message: "Error creating unit", error: err });
-        } else {
-            res.status(201).send({ message: "Unit created successfully", unitId: result.insertId });
+            return res.status(500).send(err);
         }
+        res.status(201).json(result);
     });
 };
 
@@ -17,6 +16,19 @@ exports.getAllUnits = (req, res) => {
             res.status(500).send({ message: "Error retrieving units", error: err });
         } else {
             res.status(200).json(results);
+        }
+    });
+};
+
+exports.getAllUnitsByProduct = (req, res) => {
+    const productId = req.params.productId;
+    Unit.getAllByProdut(productId, (err, result) => {
+        if (err) {
+            res.status(500).send({ message: "Error retrieving unit", error: err });
+        } else if (!result) {
+            res.status(404).send({ message: "Unit not found" });
+        } else {
+            res.status(200).json(result);
         }
     });
 };

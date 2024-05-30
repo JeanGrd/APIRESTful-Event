@@ -63,6 +63,15 @@ class Supplier {
         });
     }
 
+    static getIdByName(name, callback) {
+        const query = 'SELECT SUPPLIER_ID FROM SUPPLIERS WHERE NAME = ?';
+        db.query(query, [name], (err, results) => {
+            if (err) return callback(err);
+            if (results.length === 0) return callback(new Error('Supplier not found'));
+            callback(null, results[0].SUPPLIER_ID);
+        });
+    }
+
 }
 
 module.exports = Supplier;

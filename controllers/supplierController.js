@@ -60,3 +60,13 @@ exports.deleteSupplier = (req, res) => {
         }
     });
 };
+
+exports.getSupplierIdByName = (req, res) => {
+    const supplierName = req.params.name;
+    Supplier.getIdByName(supplierName, (err, supplierId) => {
+        if (err) {
+            return res.status(500).send(err);
+        }
+        res.json({ supplierId });
+    });
+};

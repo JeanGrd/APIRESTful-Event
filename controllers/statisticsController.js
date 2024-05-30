@@ -29,3 +29,15 @@ exports.getSupplierActivity = (req, res) => {
         }
     });
 };
+
+exports.getProductQuantityById = (req, res) => {
+    const productId = req.params.productId;
+    Statistics.getQuantityById(productId, (err, quantity) => {
+        if (err) {
+            res.status(500).send({ message: "Error retrieving product quantity", error: err });
+        } else {
+            res.status(200).send({ quantity: quantity });
+        }
+    });
+};
+
